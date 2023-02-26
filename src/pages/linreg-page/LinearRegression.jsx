@@ -5,13 +5,15 @@ const LinearRegression = () => {
 
     const epochs = 100;
     const canvas = useRef()
+    const w = 600
+    const h = 600
     const [coord, setCoord] = useState({})
     const [xs, setXs] = useState([])
     const [ys, setYs] = useState([])
     const [coef, setCoef] = useState({w: 0, b: 0})
 
     const transformXY = (x, y) => {
-        return [ x / 600, 1 - (y / 600) ]
+        return [ x / w, 1 - (y / w) ]
     }
 
     const pushData = (x, y) => {
@@ -30,11 +32,9 @@ const LinearRegression = () => {
             for(let i = 0; i < epochs; i++) {
                 for(let j = 0; j < xs.length; j++) {
                     const y_pred = w * xs[j] + b
-                    w -= (xs[j]*(y_pred - ys[j]))
-                    b -= (y_pred - ys[j])
+                    w -= 0.01*(xs[j]*(y_pred - ys[j]))
+                    b -= 0.01*(y_pred - ys[j])
                 }
-                console.log(w)
-                console.log(b)
             }
             setCoef({ w: w, b: b })
         }
@@ -42,39 +42,45 @@ const LinearRegression = () => {
             setCoef({ w: 0, b: 0 })
     }
 
-    const drawPoint = () => {
+    const draw = () => {
         const ctx = canvas.current.getContext("2d")
-        ctx.fillStyle = "white"
-        ctx.fillRect(coord.x * 600, (coord.y - 1) * -600, 5, 5)
-        ctx.stroke()
-    }
-
-    const drawLine = () => {
-        const ctx = canvas.current.getContext("2d")
-        ctx.fillStyle = "white"
+        ctx.clearRect(0, 0, w, h)
         ctx.beginPath()
-        ctx.moveTo(0, (coef.b - 1) * -600)
-        ctx.lineTo(600, (coef.w * 600 + coef.b - 1) * -600)
+        ctx.fillStyle = "white"
+        ctx.moveTo(0, (coef.b - 1) * -w)
+        ctx.lineTo(w, (coef.w + coef.b - 1) * -w)
+        for(let i = 0; i < xs.length; i++)
+            ctx.fillRect(xs[i] * w, (ys[i] - 1) * -w, 5, 5)
+        ctx.strokeStyle = "#FFFFFF"
+        ctx.lineWidth = 1
         ctx.stroke()
-    }
+    } 
 
     useEffect(() => {
         updateCoef(xs, ys)
-        console.log(coef)
-    }, [xs])
-    useEffect(() => {
-        drawPoint()
-        drawLine()    
+        draw()   
     }, [coord])
 
     return (
-        <div className="main-wrapper">
+        <div 
+            style={{
+                display: "flex",
+                flexDirection: "column", 
+            }}
+            className="main-wrapper"
+        >
+            <h1 
+                style={{
+                    marginBottom: "15px"
+                }}
+            >
+                Линейная регрессия</h1>
             <canvas 
-            width="600"
-            height="600"
-            onClick={(event) => pushData(event.clientX, event.clientY)} 
-            className={classes["graph-canvas"]}
-            ref={canvas}
+                width={w}
+                height={h}
+                onClick={(event) => pushData(event.clientX, event.clientY)} 
+                className={classes["graph-canvas"]}
+                ref={canvas}
             />
         </div>
     )
