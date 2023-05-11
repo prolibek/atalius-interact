@@ -1,3 +1,12 @@
 .graph-canvas {
     border: 1px solid white;
 }
+
+.model-box {
+    margin-right: 50px;
+}
+
+.mae-block {
+    text-align: center;
+    margin-bottom: 50px;
+}

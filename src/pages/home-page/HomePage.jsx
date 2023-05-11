@@ -1,6 +1,7 @@
 import React from "react"
 import classes from "./HomePage.module.css"
 import { useNavigate } from "react-router-dom"
+import AtaliusButton from "../../components/UI/AtaliusButton";
 
 const HomePage = () => {
     const navigate = useNavigate()
@@ -11,9 +12,9 @@ const HomePage = () => {
                 <h1 className={classes["main-title"]}>
                     Добро пожаловать на Atalius!
                 </h1>
-                <button onClick={() => navigate("/linreg", { replace: true }) }className={classes["start-btn"]}>
+                <AtaliusButton onClick={() => navigate("/linreg", { replace: true }) }>
                     Начать!
-                </button>
+                </AtaliusButton>
             </div>
         </div>
     )

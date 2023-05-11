@@ -1,0 +1,14 @@
+.graph-canvas {
+    border: 1px solid white;
+}
+
+.model-box {
+    margin-right: 50px;
+}
+
+.radio-input {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px; 
+    margin-bottom: 20px
+}
