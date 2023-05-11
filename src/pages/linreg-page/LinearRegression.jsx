@@ -6,7 +6,7 @@ import AtaliusButton from "../../components/UI/AtaliusButton"
 
 const LinearRegression = () => {
 
-    const epochs = 300;
+    const epochs = 50;
     const canvas = useRef()
     const w = 700
     const h = 450
@@ -38,21 +38,24 @@ const LinearRegression = () => {
             for(let i = 0; i < epochs; i++) {
                 for(let j = 0; j < xs.length; j++) {
                     const y_pred = w * xs[j] + b
-                    w -= 0.01*(xs[j]*(y_pred - ys[j]))/xs.length
-                    b -= 0.01*(y_pred - ys[j])/xs.length
+                    w -= ((xs[j]*(y_pred - ys[j])))/xs.length
+                    b -= ((y_pred - ys[j]))/xs.length
                 }
             }
             const newCoef = { w, b }
             if(JSON.stringify(newCoef) !== JSON.stringify(coef))
                 setCoef(newCoef)
         }
-
+    
         let error =  0
         for(let i = 0; i < xs.length; i++) {
             error += Math.abs(coef.w * xs[i] + coef.b - ys[i])
         }
         if(xs.length)
             setMae((error / xs.length).toPrecision(4))
+    }, [xs, ys])
+    
+    useEffect(() => {
 
         const ctx = canvas.current.getContext("2d")
 

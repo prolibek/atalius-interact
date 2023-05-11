@@ -7,17 +7,17 @@ import AtaliusButton from "../../components/UI/AtaliusButton"
 
 const LogisticRegression = () => {
 
-    const epochs = 300;
+    const epochs = 500;
     const canvas = useRef()
     const radio = useRef()
-    const w = 700
+    const w = 450
     const h = 450
 
     const [cl, setCl] = useState(0);
     const [xs, setXs] = useState([]);
     const [ys, setYs] = useState([]);
     const [cls, setCls] = useState([]);
-    const [coef, setCoef] = useState({w: 0, b: 0})
+    const [coef, setCoef] = useState({w1: 0, w2: 0, b: 0})
     const [acc, setAcc] = useState(0)
 
     const pushData = (x, y, cl) => {
@@ -32,21 +32,42 @@ const LogisticRegression = () => {
         setXs([])
         setYs([])
         setCls([])
-        setCoef({w: 0, b: 0})
+        setCoef({w1: 0, w2: 0, b: 0})
         setAcc(0)
     }
+
+    useEffect(() => {
+        if(xs.length) {
+            let w1 = Number(coef.w1)
+            let w2 = Number(coef.w2)
+            let b = Number(coef.b)
+    
+            for(let i = 0; i < epochs; i++) {
+                for(let j = 0; j < xs.length; j++) {
+                    const y_pred = sigmoid(w1 * xs[j] + w2 * ys[j] + b)
+                    w1 -= (xs[j] * (y_pred - cls[j])) / xs.length
+                    w2 -= (ys[j] * (y_pred - cls[j])) / xs.length
+                    b -= ((y_pred - cls[j])) / xs.length
+                    console.log(w1)
+                }
+            }
+            const newCoef = { w1, w2, b }
+            setCoef(newCoef)
+        }
+    }, [xs, ys, cls])
     
     useEffect(() => {
-
-
 
         const ctx = canvas.current.getContext("2d")
 
         ctx.clearRect(0, 0, w, h)
         ctx.beginPath()
         ctx.fillStyle = "white"
-         
+        ctx.moveTo(0, (- coef.b / coef.w2 - 1) * -w)
+        console.log((- (coef.b + 1) / coef.w2 - 1) * -w + " " + ((-coef.w1 - (coef.b + 1)) / coef.w2 - 1) * -w)
+        ctx.lineTo(w, ((- coef.w1 - coef.b) / coef.w2 - 1) * -w)         
         ctx.closePath()
+        ctx.stroke()
         for(let i = 0; i < xs.length; i++) {
             ctx.beginPath()
             if(cls[i]) 
@@ -62,7 +83,7 @@ const LogisticRegression = () => {
         ctx.strokeStyle = "#FFFFFF"
         ctx.lineWidth = 1
         ctx.stroke()
-    }, [xs, ys, cl])
+    }, [xs, ys, cl, coef])
 
     const navigate = useNavigate()
 
